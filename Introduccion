@@ -154,4 +154,28 @@ Ej: {edad:-1} Orden descendente
    Un match antes de un group seria un WHERE
    Un match despues de un group seria un HAVING
    
+   "buen servicio pero en mal estado"
+   "muy satisfecho con la compra"
+   "muy mal tuve que devolverlo"
+   "perfecto en todos los sentidos"
+   "mal, no volveré a comprar"
+   
+   db.opiniones.aggregate([
+                   {$match:{$text:{$search:"mal"}}},
+                   {$group:{id:"$producto",opiNegativas:{$sum:1}}}}
+                 ])
+   
+   TRIPADVISOR
+   TRIVAGO
+   VIMEO es como YOUTUBE
+   xpo llevan paquetes para AMAZON e INDITEX
+   Amazon  { en San Fernando
+           { en Guadalajara
+   
+   CERN -> Pasarlo a cintas la información (Generador de particulas)
+   
+   >db.resultados.aggregate([
+                   {$addFields: {tiempo: {$subtract: ["$llegada",
+                   new Data ("2020-01-30"T12:00:002)]}}}])
+   
    
