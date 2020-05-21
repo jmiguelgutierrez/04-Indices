@@ -1,0 +1,157 @@
+Los índices en Mongo DB actuan al igual que un índice en un libro.
+
+- Tendran un coste de rendimiento
+- Van a ocupar mucho espacio en la memoria para optimizar el índice
+- Las operaciones se van a ralentizar un poco
+
+Mongo DB Compass - localhost:27017
+- Cliente de Mongo -
+
+Ej: {edad:-1} Orden descendente
+    
+    {apellido1:1, edad:1, _id:0}
+    db.clientes.createIndex({apellido1:1{)
+    
+    Álvarez -> {.....}
+    Álvarez -> {.....}
+       .
+       .
+       .
+    Burgos  -> {.....}
+       .
+    Zuil    -> {.....}
+    
+    gimnasio.clientes
+    
+    Método getIndexes()
+    Método dropIndex()
+      - Elimina todos los índices exceptoel del campo _id
+    64 índices, 31 campos en cada indice
+    
+    db.productos.createIndex({stock:1,etiquetas:1})
+    No puedes tener un  insert compuesto con 2 arrays
+    _____________________________________________________________________________
+    En Chrome
+    Software - Community Server - Download Mongo DB - W64 msi
+    
+    db.libros.getIndexes()
+    db.libros.createIndex({titulo:"text",autor:"text"})
+    db.libros.createIndex("$**":"text"})
+    Google utilizaba y utiliza índices
+    
+    Pueden existir índices dobles de título y categoria {$meta:"textScore"}
+    Operadores $text y $search
+    ___________________________
+    
+    SAP está hecho en ABAP 4.0
+    En plan financiero está muy bien pero en el resto se está perdiendo
+    Para multinacionales los auditorias las pasan
+    {} devuelve todo el documento en Mongo DB Compass
+    
+    Indices parciales
+    db.<coleccion>.createIndex(
+                     {<campo>:1|-1,.....}
+                     {partialFilterexpression:<expresion>}
+                    )
+    Solo indexan los documentos que cumplan la expresión detallada.
+    
+    Indices sparse
+        Solo indexa los documentos que contengan los campos indexados
+        db.<colección>.createIndex(
+                            {<campo>:1|-1,...}
+                            {sparse:true}
+                           )
+    Método hint() para consultas
+    db.<coleccion>.find({consulta}).hint({indice})
+    Fuerza a usar un índice en la consulta
+    
+    PlanCache
+      Se puede vaciar de manera manual
+      Si se reinicia el servidor se vacía
+      ¿El Replica Set replica la PlanCache?
+    
+    Método explain()
+    db.<coleccion>.find({consulta}).explain(verbosidad)
+    .explain() ó explain("queryPlanner")
+    
+    Query Optimizer
+      - Mecanismo que comprueba qué indice es el más eficiente
+    Ejecuta el Query Optimizer para elegiar el plan ganador (índice más eficiente) y devuelve un objeto Query Planner con las etapas del plan ganador.
+    La consulta no se llega a ejecutar.
+    explain("executionStats")
+    Y ejecuta la consulta y devuelve un objeto Execution Stats con los datos de la ejecución.
+    .explain("allPlansExecution")
+    
+    Lanzamos estos métodos para ver el plan que más nos convenza
+                    ________________________________
+                    
+    En WINDOWS poner DB KODA
+    
+    Servidor
+        |        ______________ 
+        |________|            |    MEMORIA RAM
+                 |            |        - INDICES
+                 |            |        - dataset
+            _____|            |          "frecuente"  
+           |     |____________|        - datos
+           |      
+           |
+         disco
+   
+   ¿Que ocurre si el orden del indice coindice con el orden de la consulta?
+   Irá más rapido
+   
+           - WIRED IIGER
+           - M-MEMORY
+   
+   Si el índice va ascendente o descendente la consulta igual
+   
+   Ordenación { sin indice
+              { con indice
+              { con indice compuesto
+              { con indice compuesto de tres o más campos
+   Explain -> All Plans Execution
+   
+   Ej: 
+        Álvarez 60
+        Álvarez 58
+        
+        Pérez   45
+        Pérez   28
+        
+        ZUil    46
+   Ej:
+        Pérez: 1               Apellido: 1         1- Ascendente         
+        Edad: -1               Edad:1             -1- Descendente
+        
+        IXSCAN -> Escaneo
+        FETCH -> Recuperación de los datos
+        SORT -> Ordenación
+        
+   AGGREGATION
+   db.<coleccion>.aggregate(
+                      [
+                        {etapas con operadores},
+                        ....
+                      ],
+                      {opciones}
+                     )
+   db.productos.find({},{_id:0})
+   {"nombre":"Camiseta Nike","tallas":
+    ["xs","s","m","l","xl"]}
+   
+   db.participantes.aggregate([
+      {$match: {edad:{$gte:50},edad: {$lt:60}}},
+      {$group: {_id:"$nombre",total:{$sum:1}}},
+      {$sort:  {total:-1}}
+     ])
+   > {"_id": "Lucia", "total", 150499}
+     {"_id": "Pedro", "total", 150500}
+     {"_id": "Jose Miguel", "total", 150501}
+     {"_id": "Andres", "total", 150502}
+     {"_id": "Juan Jose", "total", 150503}
+     
+   Un match antes de un group seria un WHERE
+   Un match despues de un group seria un HAVING
+   
+   
